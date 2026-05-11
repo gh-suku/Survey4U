@@ -36,7 +36,7 @@ export default function EventDetail() {
 
     try {
       const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data);
+      const workbook = XLSX.read(data, { type: 'array' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
@@ -63,7 +63,7 @@ export default function EventDetail() {
       alert(`Successfully added ${jsonData.length} questions!`);
     } catch (err) {
       console.error('Failed to upload questions:', err);
-      alert('Failed to upload questions. Please check the file format.');
+      alert('Failed to upload questions. Please ensure it\'s a valid .xlsx or .xls file with the correct format.');
     }
   }
 

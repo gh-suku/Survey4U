@@ -32,9 +32,11 @@
 | Would you like voice feedback?    | voice           |                            | no       |
 ```
 
-📄 **Sample Template:** Use `sample_questions_template.csv` as a starting point!
+📄 **Sample Template:** Use `sample_questions_template.xlsx` as a starting point!
 
 📖 **Full Guide:** See `EXCEL_UPLOAD_GUIDE.md` for detailed format specifications.
+
+**Important:** Only Excel files (.xlsx, .xls) are supported. CSV files will not work.
 
 ---
 
@@ -182,9 +184,10 @@ Time management and keeping up with new technologies
 ### Bulk Upload Issues
 
 **Problem:** "Failed to parse Excel file"
-- ✅ Make sure file is .xlsx or .xls format
+- ✅ Make sure file is .xlsx or .xls format (NOT CSV)
 - ✅ Check that you have a `question` column
 - ✅ Try opening the file in Excel to verify it's not corrupted
+- ✅ Re-save the file as .xlsx format
 
 **Problem:** Questions not appearing
 - ✅ Refresh the page

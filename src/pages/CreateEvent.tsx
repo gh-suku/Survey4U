@@ -32,7 +32,7 @@ export default function CreateEvent() {
 
     try {
       const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data);
+      const workbook = XLSX.read(data, { type: 'array' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
@@ -47,7 +47,7 @@ export default function CreateEvent() {
 
       setUploadedQuestions(questions);
     } catch (err) {
-      setError('Failed to parse Excel file. Please check the format.');
+      setError('Failed to parse Excel file. Please ensure it\'s a valid .xlsx or .xls file with the correct format.');
       console.error(err);
     }
   }
@@ -138,7 +138,7 @@ export default function CreateEvent() {
           <div className="space-y-2 pt-4 border-t border-editorial-border">
             <label className="label-archival text-[8px]">Bulk Upload Questions (Optional)</label>
             <p className="text-xs font-sans opacity-50 mb-3">
-              Upload an Excel file with questions. Expected columns: <span className="font-mono">question</span>, <span className="font-mono">type</span> (text/voice/multiple-choice), <span className="font-mono">options</span> (comma-separated), <span className="font-mono">required</span> (yes/no)
+              Upload an Excel file (.xlsx or .xls) with questions. Expected columns: <span className="font-mono">question</span>, <span className="font-mono">type</span> (text/voice/multiple-choice), <span className="font-mono">options</span> (comma-separated), <span className="font-mono">required</span> (yes/no)
             </p>
             
             <div className="flex items-center gap-3">

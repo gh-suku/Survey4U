@@ -115,7 +115,8 @@ Voice feedback?             | voice           |                  | no
 7. ✅ `IMPLEMENTATION_COMPLETE.md` - This file
 
 ### New Template Files (1)
-1. ✅ `sample_questions_template.csv` - Sample Excel template
+1. ✅ `sample_questions_template.xlsx` - Sample Excel template (Excel format only)
+2. ✅ `create_excel_template.js` - Script to regenerate template
 
 ---
 
@@ -153,7 +154,7 @@ Voice feedback?             | voice           |                  | no
 - **Testing Guide:** `TESTING_CHECKLIST.md`
 
 ### Templates
-- **Sample Excel:** `sample_questions_template.csv`
+- **Sample Excel:** `sample_questions_template.xlsx` (Excel format only - .xlsx or .xls)
 
 ---
 
@@ -164,7 +165,7 @@ Voice feedback?             | voice           |                  | no
 1. **Test Bulk Upload:**
    ```
    - Go to Create New Event
-   - Upload sample_questions_template.csv
+   - Upload sample_questions_template.xlsx
    - Verify questions load
    - Create event
    ```

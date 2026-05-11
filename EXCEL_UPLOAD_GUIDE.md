@@ -3,6 +3,8 @@
 ## Overview
 You can now upload questions in bulk using an Excel file (.xlsx or .xls) when creating a new event or adding questions to an existing event.
 
+**Note:** Only Excel files (.xlsx and .xls) are supported. CSV files are not supported.
+
 ## Excel File Format
 
 Your Excel file should have the following columns:
@@ -52,14 +54,22 @@ Here's an example of how your Excel file should look:
 
 ## Example Download
 
-You can create a sample Excel file with the structure above and save it as a template for future use.
+You can use the provided `sample_questions_template.xlsx` file as a template for your own questions.
+
+**To create your own template:**
+1. Open Excel or Google Sheets
+2. Create columns: `question`, `type`, `options`, `required`
+3. Fill in your questions following the format above
+4. Save as `.xlsx` or `.xls` format (not CSV)
+5. Upload to Survey4U
 
 ## Troubleshooting
 
 **Error: "Failed to parse Excel file"**
-- Make sure your file is in .xlsx or .xls format
+- Make sure your file is in .xlsx or .xls format (not CSV)
 - Check that you have a `question` column
 - Verify that there are no special characters causing issues
+- Try opening and re-saving the file in Excel
 
 **Questions not appearing:**
 - Make sure the `question` column has text in it
