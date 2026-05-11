@@ -7,32 +7,44 @@ import type { Response, Event, AnalysisResult } from '../types';
 
 export function exportToExcel(
   event: Event,
-  responses: any[]
+  groupedResponses: any[]
 ): void {
-  // Prepare data for Excel
-  const excelData = responses.map((response) => ({
-    'Question': response.questions?.question_text || 'N/A',
-    'Response': response.answer_text || response.answer_audio_url || 'N/A',
-    'Response Type': response.response_type,
-    'Responder Name': response.responder_name || 'Anonymous',
-    'Responder Email': response.responder_email || 'N/A',
-    'Timestamp': new Date(response.created_at).toLocaleString()
-  }));
+  // Get all unique questions from the first response (assuming all have same questions)
+  const questions = groupedResponses.length > 0 
+    ? groupedResponses[0].answers.map((a: any) => a.question_text)
+    : [];
+
+  // Prepare data for Excel - one row per responder
+  const excelData = groupedResponses.map((group) => {
+    const row: any = {
+      'Name': group.responder_name || 'Anonymous',
+      'Email': group.responder_email || 'N/A',
+    };
+
+    // Add each answer as a column (Q1, Q2, Q3, etc.)
+    group.answers.forEach((answer: any, index: number) => {
+      const columnName = `Q${index + 1}: ${answer.question_text}`;
+      row[columnName] = answer.answer_text || answer.answer_audio_url || 'No answer';
+    });
+
+    row['Submitted At'] = new Date(group.created_at).toLocaleString();
+
+    return row;
+  });
 
   // Create workbook and worksheet
   const worksheet = XLSX.utils.json_to_sheet(excelData);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Responses');
 
-  // Set column widths
-  worksheet['!cols'] = [
-    { wch: 50 }, // Question
-    { wch: 50 }, // Response
-    { wch: 15 }, // Response Type
-    { wch: 25 }, // Responder Name
-    { wch: 30 }, // Responder Email
+  // Set column widths dynamically
+  const colWidths = [
+    { wch: 25 }, // Name
+    { wch: 30 }, // Email
+    ...questions.map(() => ({ wch: 40 })), // Each question column
     { wch: 20 }  // Timestamp
   ];
+  worksheet['!cols'] = colWidths;
 
   // Generate filename
   const filename = `${event.slug}_responses_${new Date().toISOString().split('T')[0]}.xlsx`;
@@ -47,9 +59,10 @@ export function exportToExcel(
 
 export function exportToMarkdown(
   event: Event,
-  analysis: AnalysisResult
+  analysis: AnalysisResult,
+  groupedResponses: any[]
 ): void {
-  const markdown = generateMarkdownReport(event, analysis);
+  const markdown = generateMarkdownReport(event, analysis, groupedResponses);
   
   // Create blob and download
   const blob = new Blob([markdown], { type: 'text/markdown' });
@@ -65,7 +78,8 @@ export function exportToMarkdown(
 
 function generateMarkdownReport(
   event: Event,
-  analysis: AnalysisResult
+  analysis: AnalysisResult,
+  groupedResponses: any[]
 ): string {
   const date = new Date().toLocaleDateString('en-GB', {
     day: 'numeric',
@@ -73,11 +87,32 @@ function generateMarkdownReport(
     year: 'numeric'
   });
 
+  // Get all questions from first response
+  const questions = groupedResponses.length > 0 
+    ? groupedResponses[0].answers.map((a: any) => a.question_text)
+    : [];
+
+  // Generate responses section
+  const responsesSection = groupedResponses.map((group, index) => {
+    const answersText = group.answers.map((answer: any, qIndex: number) => 
+      `**Q${qIndex + 1}: ${answer.question_text}**\n${answer.answer_text || answer.answer_audio_url || 'No answer'}`
+    ).join('\n\n');
+
+    return `### Response ${index + 1}: ${group.responder_name || 'Anonymous'}
+
+**Email:** ${group.responder_email || 'N/A'}  
+**Submitted:** ${new Date(group.created_at).toLocaleString()}
+
+${answersText}
+`;
+  }).join('\n\n---\n\n');
+
   return `# Survey Analysis Report: ${event.title}
 
 **Generated:** ${date}  
 **Event:** ${event.title}  
-**Status:** ${event.status}
+**Status:** ${event.status}  
+**Total Responses:** ${groupedResponses.length}
 
 ---
 
@@ -114,6 +149,18 @@ ${useCase.priority ? `**Priority:** ${useCase.priority}` : ''}
 ## Recommendations
 
 ${analysis.recommendations.map((rec, index) => `${index + 1}. ${rec}`).join('\n')}
+
+---
+
+## Survey Questions
+
+${questions.map((q, index) => `${index + 1}. ${q}`).join('\n')}
+
+---
+
+## All User Responses
+
+${responsesSection}
 
 ---
 

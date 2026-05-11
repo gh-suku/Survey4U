@@ -1,0 +1,9 @@
+question,type,options,required
+What is your role in the organization?,multiple-choice,"Manager,Developer,Designer,Analyst,Other",yes
+How many years of experience do you have?,text,,yes
+What are your main challenges with current tools?,text,,yes
+Would you like to provide voice feedback?,voice,,no
+Which features are most important to you?,multiple-choice,"Performance,Security,Ease of Use,Cost,Support",yes
+What is your department?,multiple-choice,"Engineering,Sales,Marketing,HR,Operations",yes
+Any additional comments or suggestions?,text,,no
+Rate your overall satisfaction,multiple-choice,"Very Satisfied,Satisfied,Neutral,Dissatisfied,Very Dissatisfied",yes

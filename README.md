@@ -12,11 +12,12 @@ A lightweight event-based survey platform with AI-powered analysis. Create event
 - ✅ **Admin Authentication** - Signup/Login with plain password storage
 - ✅ **Event Management** - Create, edit, and publish survey events
 - ✅ **Question Builder** - Add text, voice, or multiple-choice questions
+- ✅ **Bulk Question Upload** - Import questions from Excel files (NEW!)
 - ✅ **QR Code Generation** - Share surveys via QR codes
 - ✅ **Response Analytics** - View all responses in real-time
-- ✅ **Excel Export** - Download responses as .xlsx files
+- ✅ **Excel Export** - Download responses in row-based format (Name | Email | Q1 | Q2...) (IMPROVED!)
 - ✅ **AI Analysis** - Gemini-powered insights and recommendations
-- ✅ **Markdown Reports** - Export AI analysis as .md files
+- ✅ **Markdown Reports** - Export comprehensive analysis with all questions and responses (IMPROVED!)
 
 ### Public Features
 - ✅ **Anonymous Access** - No login required for survey takers
@@ -24,6 +25,26 @@ A lightweight event-based survey platform with AI-powered analysis. Create event
 - ✅ **Multiple Question Types** - Text, voice recording, multiple choice
 - ✅ **Progress Tracking** - Visual progress bar during survey
 - ✅ **Thank You Page** - Confirmation after submission
+
+## Recent Updates
+
+### 🎉 New Features (Latest)
+1. **Bulk Question Upload** - Upload Excel files with multiple questions at once
+   - Works when creating new events or adding to existing events
+   - Supports all question types (text, voice, multiple-choice)
+   - See `EXCEL_UPLOAD_GUIDE.md` for format details
+
+2. **Improved Excel Export** - Better data format for analysis
+   - One row per respondent (instead of one row per answer)
+   - Format: Name | Email | Q1 | Q2 | Q3... | Submitted At
+   - Easier to analyze in spreadsheet applications
+
+3. **Enhanced AI Analysis Reports** - More comprehensive markdown exports
+   - Includes complete list of all survey questions
+   - Shows all user responses with full details
+   - Better organized sections for easier reading
+
+📖 See `FEATURE_UPDATES.md` for detailed information about these updates.
 
 ## Tech Stack
 

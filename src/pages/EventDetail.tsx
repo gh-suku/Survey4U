@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, Plus, Trash2, ExternalLink, Download, 
-  Sparkles, QrCode, Loader2, Eye, CheckSquare, Square
+  Sparkles, QrCode, Loader2, Eye, CheckSquare, Square, Upload
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import * as XLSX from 'xlsx';
 import {
   getEvent, getQuestions, addQuestion, deleteQuestion,
   publishEvent, getGroupedResponses, updateEvent, updateQuestion
@@ -28,6 +29,43 @@ export default function EventDetail() {
     is_required: true
   });
   const [optionInput, setOptionInput] = useState('');
+
+  async function handleBulkUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !id) return;
+
+    try {
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data);
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      // Get the highest order number
+      const maxOrder = Math.max(...questions.map(q => q.order_number), 2);
+
+      // Parse and add questions
+      for (let i = 0; i < jsonData.length; i++) {
+        const row: any = jsonData[i];
+        const questionData = {
+          question_text: row.question || row.Question || '',
+          question_type: (row.type || row.Type || 'text').toLowerCase() as 'text' | 'voice' | 'multiple-choice',
+          options: row.options || row.Options ? String(row.options || row.Options).split(',').map((s: string) => s.trim()) : [],
+          is_required: (row.required || row.Required || 'yes').toLowerCase() === 'yes',
+          order_number: maxOrder + i + 1
+        };
+
+        if (questionData.question_text) {
+          await addQuestion(id, questionData);
+        }
+      }
+
+      await loadEventData();
+      alert(`Successfully added ${jsonData.length} questions!`);
+    } catch (err) {
+      console.error('Failed to upload questions:', err);
+      alert('Failed to upload questions. Please check the file format.');
+    }
+  }
 
   useEffect(() => {
     if (id) loadEventData();
@@ -108,19 +146,7 @@ export default function EventDetail() {
 
   async function handleExportExcel() {
     if (!event) return;
-    // Convert grouped responses back to flat format for Excel
-    const flatResponses = groupedResponses.flatMap(group =>
-      group.answers.map(answer => ({
-        questions: { question_text: answer.question_text },
-        answer_text: answer.answer_text,
-        answer_audio_url: answer.answer_audio_url,
-        response_type: answer.response_type,
-        responder_name: group.responder_name,
-        responder_email: group.responder_email,
-        created_at: group.created_at
-      }))
-    );
-    exportToExcel(event, flatResponses);
+    exportToExcel(event, groupedResponses);
   }
 
   async function handleAnalyzeAndExport() {
@@ -147,8 +173,12 @@ export default function EventDetail() {
         })
       });
 
+      if (!response.ok) {
+        throw new Error('Analysis failed');
+      }
+
       const analysis: AnalysisResult = await response.json();
-      exportToMarkdown(event, analysis);
+      exportToMarkdown(event, analysis, groupedResponses);
     } catch (error) {
       console.error('Failed to analyze:', error);
       alert('Analysis failed. Please try again.');
@@ -276,9 +306,21 @@ export default function EventDetail() {
       <div className="max-w-7xl mx-auto p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column - Questions */}
         <section className="space-y-6">
-          <h2 className="text-2xl font-light border-b border-editorial-border pb-4">
-            Questions ({questions.length})
-          </h2>
+          <div className="flex items-baseline justify-between border-b border-editorial-border pb-4">
+            <h2 className="text-2xl font-light">
+              Questions ({questions.length})
+            </h2>
+            <label className="btn-editorial bg-editorial-accent text-white h-8 px-3 flex items-center gap-2 text-xs cursor-pointer">
+              <Upload size={12} />
+              Bulk Upload
+              <input
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleBulkUpload}
+                className="hidden"
+              />
+            </label>
+          </div>
 
           {/* Add Question Form */}
           <form onSubmit={handleAddQuestion} className="bg-white border border-editorial-border p-6 space-y-4">

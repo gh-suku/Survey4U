@@ -110,6 +110,74 @@ export async function createEvent(data: {
   return event.id;
 }
 
+export async function createEventWithQuestions(data: {
+  title: string;
+  description?: string;
+  slug?: string;
+  questions?: Array<{
+    question_text: string;
+    question_type: 'text' | 'voice' | 'multiple-choice';
+    options?: string[];
+    is_required?: boolean;
+    order_number: number;
+  }>;
+}): Promise<string> {
+  const session = getAdminSession();
+  if (!session) throw new Error('Not authenticated');
+
+  const slug = data.slug || createSlug(data.title);
+
+  // Verify admin exists in database
+  const { data: adminExists } = await supabase
+    .from('admins')
+    .select('id')
+    .eq('id', session.id)
+    .single();
+
+  if (!adminExists) {
+    throw new Error('Admin account not found. Please login again.');
+  }
+
+  // Create event
+  const { data: event, error: eventError } = await supabase
+    .from('events')
+    .insert([{
+      admin_id: session.id,
+      title: data.title,
+      description: data.description,
+      slug,
+      status: 'draft'
+    }])
+    .select('id')
+    .single();
+
+  if (eventError) throw new Error(eventError.message);
+
+  // Add uploaded questions if provided
+  if (data.questions && data.questions.length > 0) {
+    const questionsToInsert = data.questions.map(q => ({
+      event_id: event.id,
+      question_text: q.question_text,
+      question_type: q.question_type,
+      options: q.options || [],
+      is_required: q.is_required ?? true,
+      is_default: false,
+      order_number: q.order_number
+    }));
+
+    const { error: questionsError } = await supabase
+      .from('questions')
+      .insert(questionsToInsert);
+
+    if (questionsError) {
+      console.error('Failed to add questions:', questionsError);
+      // Don't throw error, event is already created
+    }
+  }
+
+  return event.id;
+}
+
 export async function getEvents(): Promise<Event[]> {
   const session = getAdminSession();
   if (!session) throw new Error('Not authenticated');
