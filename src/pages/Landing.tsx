@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Loader2, Database, Zap } from 'lucide-react';
+import { ArrowRight, Loader2, Sparkles, MessageSquare } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function Landing() {
@@ -20,99 +20,199 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-editorial-bg text-editorial-text font-serif selection:bg-editorial-text selection:text-white flex flex-col">
-      {/* Absolute Background Accents */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.03]">
-        <div className="absolute top-[-10%] left-[-10%] text-[40rem] font-bold select-none leading-none">&dagger;</div>
+    <div className="min-h-screen gradient-bg flex flex-col relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{ 
+            rotate: 360,
+            scale: [1, 1.2, 1]
+          }}
+          transition={{ 
+            duration: 20, 
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute -top-20 -left-20 w-64 h-64 bg-[#6366f1]/10 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{ 
+            rotate: -360,
+            scale: [1, 1.3, 1]
+          }}
+          transition={{ 
+            duration: 25, 
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute -bottom-20 -right-20 w-80 h-80 bg-[#ec4899]/10 rounded-full blur-3xl"
+        />
+        <motion.div 
+          animate={{ 
+            y: [0, -30, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{ 
+            duration: 15, 
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#8b5cf6]/5 rounded-full blur-3xl"
+        />
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center p-10 relative z-10">
+      <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-10 relative z-10">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-xl w-full space-y-16"
+          transition={{ duration: 0.6 }}
+          className="max-w-2xl w-full space-y-10"
         >
           {/* Brand/Hero */}
-          <div className="space-y-6 text-center">
-            <div className="flex justify-center">
-              <div className="h-16 w-16 border border-editorial-text flex items-center justify-center italic text-4xl shadow-2xl bg-white">
-                S4U
+          <div className="text-center space-y-6">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 200,
+                damping: 15,
+                delay: 0.2
+              }}
+              className="flex justify-center"
+            >
+              <div className="relative">
+                <div className="h-24 w-24 gradient-primary rounded-3xl flex items-center justify-center shadow-2xl shadow-[#6366f1]/40 rotate-3 animate-float">
+                  <MessageSquare size={48} className="text-white" strokeWidth={2.5} />
+                </div>
+                <motion.div
+                  animate={{ 
+                    rotate: [0, 10, -10, 0],
+                    scale: [1, 1.2, 1]
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatDelay: 3
+                  }}
+                  className="absolute -top-2 -right-2"
+                >
+                  <Sparkles size={28} className="text-[#f59e0b]" fill="#f59e0b" />
+                </motion.div>
               </div>
-            </div>
-            <div className="space-y-2">
-              <h4 className="label-archival text-editorial-accent tracking-[0.5em]">Survey Access Portal</h4>
-              <h1 className="text-6xl md:text-7xl font-light tracking-tighter leading-none">
-                Survey4U <br/>
-                <span className="italic font-serif ml-8 md:ml-12">Platform</span>
+            </motion.div>
+            
+            <div className="space-y-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                <span className="inline-block px-5 py-2 bg-[#6366f1]/10 text-[#6366f1] rounded-full text-sm font-bold">
+                  ✨ Survey Access Portal
+                </span>
+              </motion.div>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight leading-tight">
+                Welcome to<br/>
+                <span className="gradient-text">
+                  Survey4U
+                </span>
               </h1>
+              <p className="text-xl md:text-2xl text-[#64748b] font-medium max-w-lg mx-auto">
+                Share your thoughts and help us improve! 🚀
+              </p>
             </div>
           </div>
 
-          {/* Input Area */}
-          <div className="bg-white border border-editorial-text p-10 md:p-14 shadow-2xl relative">
-            <div className="absolute -top-3 -right-3 h-12 w-12 bg-editorial-accent text-white flex items-center justify-center shadow-lg">
-              <Zap size={20} />
-            </div>
-            
-            <form onSubmit={handleVerify} className="space-y-10">
-              <div className="space-y-4">
-                <label className="label-archival text-[10px] opacity-40">Enter Survey Code</label>
-                <div className="border-b-2 border-editorial-text pb-4 pt-2">
-                  <input 
-                    type="text" 
-                    placeholder="SURVEY-CODE"
-                    autoFocus
-                    className="w-full bg-transparent text-4xl md:text-5xl font-mono tracking-[0.2em] outline-none placeholder:opacity-10 uppercase text-center"
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                  />
-                </div>
+          {/* Input Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="card p-8 md:p-12 shadow-2xl"
+          >
+            <form onSubmit={handleVerify} className="space-y-6">
+              <div className="space-y-3">
+                <label className="label-text text-lg flex items-center gap-2">
+                  <span>Enter your survey code</span>
+                  <span className="text-[#ec4899]">✦</span>
+                </label>
+                <input 
+                  type="text" 
+                  placeholder="e.g., workshop-2024"
+                  autoFocus
+                  className="input-field text-xl font-semibold h-16"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                />
+                <p className="text-sm text-[#64748b] flex items-center gap-2">
+                  <span>💡</span>
+                  <span>You should have received this code via email</span>
+                </p>
               </div>
 
               <button 
                 type="submit" 
                 disabled={isVerifying || !code.trim()}
-                className="w-full h-16 bg-editorial-text text-white text-xs tracking-[0.5em] font-bold uppercase flex items-center justify-center gap-4 hover:bg-black transition-all disabled:opacity-30 disabled:cursor-not-allowed group"
+                className="btn-primary w-full h-16 text-lg flex items-center justify-center gap-3 shadow-xl shadow-[#6366f1]/40"
               >
                 {isVerifying ? (
-                  <Loader2 className="animate-spin" size={18} />
+                  <>
+                    <Loader2 className="animate-spin" size={24} />
+                    <span>Opening survey...</span>
+                  </>
                 ) : (
                   <>
-                    Access Survey <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+                    <span>Start Survey</span>
+                    <ArrowRight size={24} />
                   </>
                 )}
               </button>
             </form>
-          </div>
+          </motion.div>
 
-          {/* Footer Subtext */}
-          <div className="flex flex-col items-center gap-6 opacity-30">
-            <p className="text-[10px] font-sans uppercase tracking-[0.3em] text-center max-w-sm leading-relaxed">
-              AI-powered survey platform for event feedback and analysis
-            </p>
-            <div className="h-20 w-px bg-editorial-text" />
-            <div className="flex items-center gap-4 text-[9px] font-mono uppercase tracking-widest">
-               <Database size={10} />
-               <span>Secure Platform</span>
-               <span className="opacity-20">&mdash;</span>
-               <span>v.1.0.0</span>
-            </div>
-          </div>
+          {/* Features */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="grid grid-cols-3 gap-6 text-center"
+          >
+            {[
+              { emoji: '⚡', label: 'Quick & Easy' },
+              { emoji: '🔒', label: 'Secure' },
+              { emoji: '🎯', label: 'Anonymous' }
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 + i * 0.1 }}
+                className="space-y-3 p-4 rounded-xl hover:bg-white/50 transition-colors"
+              >
+                <div className="text-3xl">{feature.emoji}</div>
+                <p className="text-sm font-semibold text-[#64748b]">{feature.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </motion.div>
       </main>
 
-      {/* Subtle Sidebar for Admin Link */}
-      <div className="absolute bottom-10 right-10 flex flex-col items-end gap-2 opacity-40 hover:opacity-100 transition-opacity">
-         <p className="text-[8px] uppercase tracking-widest font-bold">Admin Portal</p>
-         <button 
+      {/* Admin Link */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="absolute bottom-6 right-6"
+      >
+        <button 
           onClick={() => navigate('/admin/login')}
-          className="text-[10px] font-sans uppercase tracking-[0.2em] underline underline-offset-4 decoration-editorial-text/20 hover:decoration-editorial-text"
-         >
-           Admin Login
-         </button>
-      </div>
+          className="px-5 py-2.5 text-sm font-semibold text-[#64748b] hover:text-[#6366f1] transition-all rounded-xl hover:bg-white/70 backdrop-blur-sm"
+        >
+          Admin Login →
+        </button>
+      </motion.div>
     </div>
   );
 }

@@ -1,29 +1,151 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Playfair Display", serif;
   --font-sans: "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Sora", sans-serif;
 
-  --color-editorial-bg: #F9F8F6;
-  --color-editorial-text: #121212;
-  --color-editorial-accent: #C2410C;
-  --color-editorial-border: rgba(18, 18, 18, 0.1);
-}
-
-@layer base {
-  body {
-    @apply bg-editorial-bg text-editorial-text font-serif selection:bg-editorial-accent selection:text-white antialiased;
-  }
-}
-
-@layer components {
-  .btn-editorial {
-    @apply font-sans px-6 py-2 border border-editorial-text text-[10px] uppercase tracking-[0.2em] font-bold transition-all hover:bg-editorial-text hover:text-white active:scale-95;
-  }
+  /* Modern, vibrant color palette inspired by Typeform */
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-primary-light: #818cf8;
+  --color-secondary: #ec4899;
+  --color-accent: #8b5cf6;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #06b6d4;
   
-  .label-archival {
-    @apply font-sans text-[10px] uppercase tracking-[0.25em] text-editorial-text/40 font-bold;
-  }
+  /* Neutral palette */
+  --color-bg: #ffffff;
+  --color-bg-alt: #f9fafb;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  
+  /* Custom animations */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Base styles */
+body {
+  @apply bg-white text-[#0f172a] font-sans selection:bg-[#6366f1] selection:text-white antialiased;
+}
+
+* {
+  @apply transition-colors duration-200;
+}
+
+/* Button Styles - Typeform inspired */
+.btn-primary {
+  @apply px-6 py-3.5 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white rounded-lg font-semibold 
+         transition-all duration-300 hover:shadow-xl hover:shadow-[#6366f1]/30 hover:-translate-y-0.5 
+         active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0;
+}
+
+.btn-secondary {
+  @apply px-6 py-3.5 bg-white text-[#6366f1] border-2 border-[#6366f1] rounded-lg font-semibold 
+         transition-all duration-300 hover:bg-[#6366f1] hover:text-white hover:shadow-lg 
+         active:scale-95;
+}
+
+.btn-ghost {
+  @apply px-6 py-3.5 bg-transparent text-[#64748b] rounded-lg font-semibold 
+         transition-all duration-300 hover:bg-[#f1f5f9] hover:text-[#0f172a];
+}
+
+/* Card Styles */
+.card {
+  @apply bg-white rounded-2xl shadow-sm border border-[#f1f5f9] transition-all duration-300;
+}
+
+.card-hover {
+  @apply bg-white rounded-2xl shadow-sm border border-[#f1f5f9] transition-all duration-300 hover:shadow-lg hover:border-[#e2e8f0] hover:-translate-y-1;
+}
+
+/* Input Styles - Clean and modern */
+.input-field {
+  @apply w-full px-4 py-3.5 bg-white border-2 border-[#e2e8f0] rounded-lg outline-none 
+         transition-all duration-300 focus:border-[#6366f1] focus:ring-4 focus:ring-[#6366f1]/10
+         placeholder:text-[#94a3b8];
+}
+
+.input-underline {
+  @apply w-full px-0 py-3 bg-transparent border-b-2 border-[#e2e8f0] outline-none 
+         transition-all duration-300 focus:border-[#6366f1] placeholder:text-[#94a3b8];
+}
+
+/* Label Styles */
+.label-text {
+  @apply text-sm font-semibold text-[#0f172a] mb-2 block;
+}
+
+.label-muted {
+  @apply text-xs font-medium text-[#64748b] uppercase tracking-wider mb-2 block;
+}
+
+/* Badge Styles */
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.badge-primary {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#6366f1]/10 text-[#6366f1];
+}
+
+.badge-success {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#10b981]/10 text-[#10b981];
+}
+
+.badge-warning {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#f59e0b]/10 text-[#f59e0b];
+}
+
+.badge-danger {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[#ef4444]/10 text-[#ef4444];
+}
+
+/* Gradient Backgrounds */
+.gradient-primary {
+  @apply bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#ec4899];
+}
+
+.gradient-bg {
+  @apply bg-gradient-to-br from-[#6366f1]/5 via-[#8b5cf6]/5 to-[#ec4899]/5;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-[#6366f1] via-[#8b5cf6] to-[#ec4899] bg-clip-text text-transparent;
+}
+
+/* Progress Bar */
+.progress-bar {
+  @apply h-1.5 bg-[#f1f5f9] rounded-full overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] transition-all duration-500;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }

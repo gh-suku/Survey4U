@@ -274,6 +274,7 @@ Follow `TESTING_CHECKLIST.md` for comprehensive testing.
 
 ### Bulk Upload
 - Excel file must have 'question' column
+- Only .xlsx and .xls formats supported (CSV not supported)
 - Maximum recommended: 500 questions per file
 - File size limit: ~10MB
 

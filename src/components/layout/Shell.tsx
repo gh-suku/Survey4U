@@ -2,15 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ClipboardCheck, 
-  Database,
+  Home,
   Users, 
   LayoutDashboard, 
   LogOut, 
   Menu, 
   Settings,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function Shell() {
   const [user, setUser] = useState<any>(null);
@@ -38,7 +40,7 @@ export default function Shell() {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
-    { name: 'Entities', path: '/admin/customers', icon: Users },
+    { name: 'Customers', path: '/admin/customers', icon: Users },
     { name: 'Workshops', path: '/admin/workshops', icon: ClipboardCheck },
     { name: 'Settings', path: '/admin/settings', icon: Settings },
   ];
@@ -48,134 +50,158 @@ export default function Shell() {
   }
 
   return (
-    <div className="min-h-screen bg-editorial-bg text-editorial-text flex flex-col md:flex-row font-serif">
+    <div className="min-h-screen bg-[#f9fafb] flex flex-col md:flex-row">
       {/* Mobile Header */}
-      <div className="md:hidden bg-editorial-bg border-b border-editorial-border px-6 py-4 flex items-center justify-between">
+      <div className="md:hidden bg-white border-b border-[#e2e8f0] px-6 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <span className="text-xs tracking-[0.2em] font-sans font-bold uppercase border border-editorial-text px-2 py-1">Archivist</span>
+          <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
+            <Sparkles size={16} className="text-white" />
+          </div>
+          <span className="font-display font-bold text-lg">Survey4U</span>
         </div>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 hover:bg-[#f1f5f9] rounded-lg transition-colors"
+        >
           {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-editorial-bg border-r border-editorial-border transform transition-transform duration-300 ease-in-out px-10 py-12 flex flex-col justify-between
+        fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-[#e2e8f0] transform transition-transform duration-300 ease-in-out
         md:relative md:translate-x-0
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="space-y-12">
-          {/* Logo / Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-editorial-text text-white flex items-center justify-center font-bold tracking-tighter text-xl">
-                T
+        <div className="h-full flex flex-col">
+          {/* Logo */}
+          <div className="p-6 border-b border-[#e2e8f0]">
+            <Link to="/admin/dashboard" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-[#6366f1]/30 group-hover:scale-110 transition-transform">
+                <Sparkles size={20} className="text-white" />
               </div>
               <div>
-                <span className="text-xs tracking-[0.25em] font-sans font-bold uppercase block leading-none">Thorne</span>
-                <span className="text-[9px] uppercase tracking-[0.1em] opacity-40">Archival Systems</span>
+                <h1 className="font-display font-bold text-xl">Survey4U</h1>
+                <p className="text-xs text-[#64748b]">Admin Portal</p>
               </div>
-            </div>
-            <div className="h-px w-full bg-editorial-border" />
+            </Link>
           </div>
 
-          <nav className="space-y-8">
-            <section>
-              <h4 className="label-archival mb-6 opacity-30">Management</h4>
-              <ul className="space-y-1 font-sans text-xs font-medium uppercase tracking-widest">
-                {navItems.map((item) => (
-                  <li key={item.path}>
-                    <Link
-                      to={item.path}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`
-                        flex items-center gap-4 py-3 px-2 group transition-all
-                        ${location.pathname === item.path || (item.path !== '/admin/dashboard' && location.pathname.startsWith(item.path)) ? 'bg-editorial-text text-white shadow-lg' : 'opacity-60 hover:opacity-100 hover:bg-editorial-text/[0.03]'}
-                      `}
-                    >
-                      <item.icon size={16} className={location.pathname === item.path || (item.path !== '/admin/dashboard' && location.pathname.startsWith(item.path)) ? 'text-white' : 'opacity-40 group-hover:opacity-100'} />
-                      <span>{item.name}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section>
-              <h4 className="label-archival mb-6 opacity-30">Analytical Node</h4>
-              <div className="space-y-3 text-[10px] font-sans uppercase tracking-widest opacity-60 bg-editorial-text/[0.02] p-4 border border-editorial-border">
-                <p className="flex justify-between"><span>Status:</span> <span className="text-editorial-accent">{user ? 'Online' : 'Restricted'}</span></p>
-                <p className="flex justify-between"><span>Region:</span> <span>Node-Alpha</span></p>
-              </div>
-            </section>
+          {/* Navigation */}
+          <nav className="flex-1 p-4 space-y-1">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path || 
+                              (item.path !== '/admin/dashboard' && location.pathname.startsWith(item.path));
+              
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`
+                    flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all relative
+                    ${isActive 
+                      ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-lg shadow-[#6366f1]/30' 
+                      : 'text-[#64748b] hover:bg-[#f1f5f9] hover:text-[#0f172a]'}
+                  `}
+                >
+                  <item.icon size={20} />
+                  <span>{item.name}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] rounded-lg -z-10"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
-        </div>
 
-        <div className="pt-10 border-t border-editorial-border">
-          {user ? (
-            <div className="flex items-center justify-between group cursor-pointer" onClick={handleSignOut}>
-              <div className="flex items-center gap-3">
-                 <div className="h-10 w-10 border border-editorial-border flex items-center justify-center text-lg italic bg-editorial-text/[0.02]">
-                  &dagger;
+          {/* User Section */}
+          <div className="p-4 border-t border-[#e2e8f0]">
+            {user ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-[#f9fafb] rounded-lg">
+                  <div className="w-10 h-10 gradient-primary rounded-full flex items-center justify-center text-white font-bold">
+                    {user.email?.[0]?.toUpperCase() || 'A'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold truncate">Admin</p>
+                    <p className="text-xs text-[#64748b] truncate">{user.email}</p>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-sans font-bold uppercase tracking-widest">Terminate Session</span>
-                  <span className="text-[9px] font-sans opacity-40 uppercase tracking-[0.1em] truncate w-32">{user.email}</span>
-                </div>
+                <button
+                  onClick={handleSignOut}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-[#ef4444] hover:bg-[#fef2f2] rounded-lg transition-colors"
+                >
+                  <LogOut size={16} />
+                  <span>Sign Out</span>
+                </button>
               </div>
-            </div>
-          ) : (
-            <Link to="/login" className="flex items-center gap-3 group cursor-pointer">
-              <div className="h-10 w-10 border border-editorial-border flex items-center justify-center text-lg italic">
-                &dagger;
-              </div>
-              <span className="text-[10px] font-sans font-bold uppercase tracking-widest underline decoration-transparent hover:decoration-current transition-all underline-offset-4">Initialise Auth</span>
-            </Link>
-          )}
+            ) : (
+              <Link 
+                to="/admin/login" 
+                className="btn-primary w-full text-center"
+              >
+                Sign In
+              </Link>
+            )}
+          </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Superior Navbar */}
-        <header className="h-20 border-b border-editorial-border flex items-center justify-between px-10 bg-editorial-bg sticky top-0 z-40 hidden md:flex">
-          <div className="flex items-center gap-6">
-            <Link to="/" className="text-[10px] uppercase tracking-[0.4em] font-sans opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2">
-               <Database size={12} /> Return to Public Node
+        {/* Top Bar */}
+        <header className="h-16 bg-white border-b border-[#e2e8f0] flex items-center justify-between px-6 sticky top-0 z-40 hidden md:flex">
+          <div className="flex items-center gap-4">
+            <Link 
+              to="/" 
+              className="flex items-center gap-2 text-sm font-medium text-[#64748b] hover:text-[#6366f1] transition-colors"
+            >
+              <Home size={16} />
+              <span>Back to Home</span>
             </Link>
           </div>
-          <div className="flex items-center gap-6">
-             <div className="h-2 w-2 rounded-full bg-editorial-accent animate-pulse" />
-             <span className="text-[10px] uppercase font-sans tracking-widest opacity-40">{new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} UTC</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#10b981]/10 text-[#10b981] rounded-full text-xs font-semibold">
+              <div className="w-2 h-2 bg-[#10b981] rounded-full animate-pulse" />
+              <span>Online</span>
+            </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto bg-editorial-bg">
+        <main className="flex-1 overflow-auto">
           <Outlet />
-          
-          {/* Universal Footer */}
-          <footer className="border-t border-editorial-border py-16 px-10 flex flex-col md:flex-row items-center justify-between gap-12 bg-editorial-text/[0.01] mt-32">
-            <div className="space-y-3 flex flex-col items-center md:items-start text-center md:text-left">
-              <p className="text-[11px] uppercase tracking-[0.5em] font-bold">Thorne & Co.</p>
-              <p className="text-[9px] font-sans opacity-30 uppercase tracking-[0.2em] font-medium">&copy; 2024 Thorne Archival Data Systems. Enterprise Intelligence Node.</p>
-            </div>
-            <div className="flex gap-12 text-[10px] uppercase tracking-[0.3em] font-bold opacity-30">
-               <a href="#" className="hover:opacity-100 transition-opacity">Protocol</a>
-               <a href="#" className="hover:opacity-100 transition-opacity">Privacy</a>
-               <a href="#" className="hover:opacity-100 transition-opacity">Endpoint</a>
-            </div>
-          </footer>
         </main>
+
+        {/* Footer */}
+        <footer className="bg-white border-t border-[#e2e8f0] py-6 px-6 mt-auto">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-[#64748b]">
+            <p>&copy; 2024 Survey4U. All rights reserved.</p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-[#6366f1] transition-colors">Privacy</a>
+              <a href="#" className="hover:text-[#6366f1] transition-colors">Terms</a>
+              <a href="#" className="hover:text-[#6366f1] transition-colors">Support</a>
+            </div>
+          </div>
+        </footer>
       </div>
 
       {/* Mobile Overlay */}
-      {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-editorial-text/10 backdrop-blur-sm z-40 md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
